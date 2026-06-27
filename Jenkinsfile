@@ -4,26 +4,27 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-
-            steps {
-
-                git branch: 'main',
-                    url: 'https://github.com/surya-3112/docker-jenkins.git'
-
-            }
-
-        }
-
 
         stage('Build Docker Image') {
 
             steps {
 
-                bat 'docker build -t mywebsite .'
+                sh 'docker build -t mywebsite .'
 
             }
+        }
 
+
+        stage('Remove Old Container') {
+
+            steps {
+
+                sh '''
+                docker stop mysite || true
+                docker rm mysite || true
+                '''
+
+            }
         }
 
 
@@ -31,11 +32,11 @@ pipeline {
 
             steps {
 
-                bat 'docker run -d -p 8081:80 --name mysite mywebsite'
+                sh 'docker run -d -p 8081:80 --name mysite mywebsite'
 
             }
-
         }
+
 
     }
 
